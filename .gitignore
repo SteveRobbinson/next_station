@@ -1,0 +1,13 @@
+# Virtual environement
+venv/
+.env
+
+# Temporary python files
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints
+notebooks/
+
+
