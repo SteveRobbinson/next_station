@@ -2,11 +2,11 @@ import requests
 from requests.exceptions import HTTPError
 import time
 
-def check_server(api_url: str,
-                 method: str,
-                 query: str | None = None,
-                 max_retries: int = 3
-                 ) -> requests.Respone | None:
+def runner(api_url: str,
+           method: str,
+           query: str | None = None,
+           max_retries: int = 3
+           ) -> requests.Respone | None:
 
     for i in range(max_retries):
         

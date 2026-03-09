@@ -1,4 +1,4 @@
-import requests
+from .runner import runner
 
 def fetch_population_grid(api_url: str) -> str | None:
 

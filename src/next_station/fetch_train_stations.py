@@ -1,4 +1,5 @@
 import requests
+from .runner import runner
 
 def fetch_train_stations(api_url: str,
                          query: str
