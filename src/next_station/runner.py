@@ -4,9 +4,10 @@ import time
 
 def runner(api_url: str,
            method: str,
+           stream: bool | None = None,
            query: str | None = None,
            max_retries: int = 3
-           ) -> requests.Respone | None:
+           ) -> requests.Response | None:
 
     for i in range(max_retries):
         
@@ -16,10 +17,10 @@ def runner(api_url: str,
                 response = requests.head(url = api_url, params = query, allow_redirects = True)
 
             if method == 'get':
-                response = requests.get(url = api_url, allow_redirects = True)
+                response = requests.get(url = api_url, allow_redirects = True, stream = stream)
             
             if method == 'post':
-                response = requests.post(url = api_url, data = query)
+                response = requests.post(url = api_url, data = query, stream = stream)
             
             response.raise_for_status()
 
