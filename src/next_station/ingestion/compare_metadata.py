@@ -21,13 +21,17 @@ def compare_metadata(bucket_name: str,
         api_metadata = api_response.headers['ETag'].strip('"')
         
         if aws_s3_metadata == api_metadata:
-            return False
+            return True
 
     
     except ClientError as e:
 
         if int(e.response['Error']['Code']) == 404:
-            return True
+            return False
 
+
+    except (AttributeError, KeyErro) as err:
+        print(f"Check if ETag exists at API response headers \n{err}")
     
-    return True
+
+    return False
