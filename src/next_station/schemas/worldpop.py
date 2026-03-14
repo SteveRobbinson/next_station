@@ -21,8 +21,8 @@ class FileUrl(BaseModel):
 
 
 
-class GetLastFileUrl(BaseModel):
-    list_url: Annotated[list[FileUrl], Field(alias='data')]
+class GetFileUrl(BaseModel):
+    list_url: Annotated[list[FileUrl], Field(alias='data', min_length = 1)]
 
     def __getitem__(self, index):
         return self.list_url[index].file_url
