@@ -7,7 +7,7 @@ def runner(api_url: str,
            stream: bool | None = None,
            query: str | None = None,
            max_retries: int = 3
-           ) -> requests.Response | None:
+           ) -> requests.Response:
 
     for i in range(max_retries):
         
@@ -27,24 +27,16 @@ def runner(api_url: str,
             return response
             
 
-        except HTTPError:
+        except HTTPError as err:
             
             if response.status_code in (400, 404):
-                print(f"Failed!: \n{response.text}")
-
-                return None
+                raise ValueError(f"WorldPop API - Invalid {method.upper()} request to {api_url}\nStatus code: {response.status_code}\nDetails: {response.text}") from err
 
             elif response.status_code in (429, 500, 501, 502, 503, 504):
-                   
+                if i == max_retries - 1:
+                    raise ConnectionError(f"WorldPop API - Max retries reached. Status code: {response.status_code}\nDetails: {response.text}") from err
+
                 time.sleep((i + 1) * 4)
-                print(f"Status code: {response.status_code}, retrying...")
                 continue
 
-
-        except Exception as err:
-
-            print(f"Other error occurred: {err}")
-
-            return None
-
-        return None
+            raise RunTimeError(f"WorldPop API - Unhandled HTTPError: {response.status_code}\nDetails: {response.text}") from err
