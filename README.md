@@ -1,1 +1,2 @@
-![Schemat Ingestion Pipeline](images/b6160688-d2db-4121-b058-a101fb4440a1.jpeg)
+![Schemat Light](images/ingestion-light-theme.svg)
+![Schemat Dark](images/ingestion-dark-theme.svg)
