@@ -1,37 +1,14 @@
 import boto3
-from botocore.exceptions import ClientError, NoCredentialsError, PartialCredentialsError, NoRegionError, EndpointConnectionError
-from exceptions import S3ServiceError, S3ConfigError, S3ConnectionError, S3AccessDeniedError, S3NotFoundError
+from mypy_boto3_s3 import S3Client
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError, NoRegionError, EndpointConnectionError
+from exceptions import S3ConfigError, S3ConnectionError
 
-def fetch_s3_client(bucket_name: str,
-                    file_name_on_s3: str
-                    ) -> dict:
+def create_s3_client() -> S3Client:
 
     try:
         
-        s3 = boto3.client('s3')
-        aws_response = s3.head_object(
-            Bucket = bucket_name,
-            Key = file_name_on_s3
-        )
-
-        return aws_response
-
+        return boto3.client('s3')
     
-    except ClientError as ce:
-        
-
-        status_code = ce.response['Error']['Code']
-        
-        if status_code == '403':
-            raise S3AccessDeniedError(f"AWS S3 - Access denied. Status code: {status_code}\nProvided credentials do not have permissions to access S3 resources") from ce
-
-        elif status_code == '404':
-            raise S3NotFoundError(f"AWS S3 - File or bucket not found. Status code: {status_code}") from ce
-
-        else:
-            raise S3ServiceError(f"AWS S3 - Client Error occurred! Status code: {status_code}") from ce
-
-
     except (NoCredentialsError, PartialCredentialsError) as nce:
         raise S3ConfigError(f"AWS S3 - No credentials found. Check your AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY") from nce
 
