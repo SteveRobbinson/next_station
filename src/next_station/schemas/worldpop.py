@@ -40,7 +40,7 @@ def ensure_string(value: any) -> str:
 
 
 class ApiMetadata(BaseModel):
-    model_dict = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True)
 
     etag: Annotated[str,
                     Field(validation_alias=AliasChoices('ETag', 'etag', 'Etag')),
