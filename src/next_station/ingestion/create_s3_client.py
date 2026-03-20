@@ -1,7 +1,7 @@
 import boto3
 from mypy_boto3_s3 import S3Client
 from botocore.exceptions import ClientError
-from exceptions import S3ServiceError, S3AccessDeniedError, S3NotFoundError
+from src.next_station.ingestion.exceptions import S3ServiceError, S3AccessDeniedError, S3NotFoundError
 
 def fetch_s3_client(s3client: S3Client,
                     bucket_name: str,
