@@ -1,7 +1,8 @@
 from .runner import runner
+import requests
 
 def fetch_train_stations(api_url: str,
                          query: str
-                         ) -> dict:
+                         ) -> requests.Response:
 
-    return runner(api_url, 'post', query=query).json()
+    return runner(api_url, 'post', stream=True, query=query)
