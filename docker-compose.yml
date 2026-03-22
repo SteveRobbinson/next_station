@@ -1,0 +1,11 @@
+services:
+  workspace:
+    image: next-station-workspace
+    container_name: moj_projekt
+    ports:
+      - '8888:8888'
+    volumes:
+      - .:/app
+      - ~/.aws:/root/.aws:ro
+    stdin_open: true
+    tty: true      
