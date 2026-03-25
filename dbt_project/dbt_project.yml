@@ -1,4 +1,4 @@
-name: next_stations
+name: dbt_project
 
 profile: next_station
 
@@ -11,11 +11,11 @@ clean-targets:
 
 seeds:
   # Builds seeds into '<your_schema_name>_raw'
-  next_station:
+  dbt_project:
     +schema: raw
 
 models:
-  next_station:
+  dbt_project:
     +static_analysis: strict
     staging:
       +materialized: view

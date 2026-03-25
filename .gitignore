@@ -11,9 +11,9 @@ __pycache__/
 notebooks/
 
 # dbt
-next_station/dbt_packages/
-next_station/dbt_internal_packages/
-next_station/logs/
-next_station/target/
+dbt_project/dbt_packages/
+dbt_project/dbt_internal_packages/
+dbt_project/logs/
+dbt_project/target/
 
 
