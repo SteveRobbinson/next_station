@@ -1,4 +1,4 @@
-from .runner import runner
+from src.next_station.infrastructure.runner import runner
 import requests
 
 def fetch_population_grid(api_url: str) -> requests.Response:
