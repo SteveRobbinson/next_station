@@ -7,7 +7,13 @@ class Settings(BaseSettings):
     population_grid_url: str
     query_for_train_stations: str
     aws_bucket_name: str
-    aws_train_file_name: str
-    aws_grid_file_name: str
+    aws_railway_stations_file_name: str
+    aws_population_grid_file_name: str
+    aws_s3_bucket_address: str
+    aws_railway_file_explode_by: str
+    databricks_catalog: str
+    databricks_schema: str
+    databricks_railway_table: str
+    databricks_population_table: str
 
 settings = Settings()
