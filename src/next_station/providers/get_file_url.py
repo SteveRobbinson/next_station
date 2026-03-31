@@ -1,4 +1,4 @@
-from .runner import runner
+from src.next_station.infrastructure.runner import runner
 from src.next_station.schemas.worldpop import GetFileUrl, FileUrl
 
 def get_file_url(api_url: str,
