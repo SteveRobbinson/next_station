@@ -5,7 +5,7 @@ from src.next_station.quality.melt_table import melt_table
 from src.next_station.core.config import settings
 from src.next_station.infrastructure.databricks import save_df_in_db
 
-spark_session = get_spark_session()
+spark_session = get_spark_session(settings.databricks_sql_user_name)
 
 df = load_json_source(spark_session,
                       (settings.aws_s3_bucket_address,
@@ -19,6 +19,3 @@ save_df_in_db(df,
               (settings.databricks_catalog,
                settings.databricks_schema,
                settings.databricks_railway_table))
-
-
-
