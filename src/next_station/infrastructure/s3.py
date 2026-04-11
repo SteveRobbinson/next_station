@@ -70,8 +70,9 @@ def get_s3_object_metadata(s3client: S3Client,
         if status_code == '403':
             raise S3AccessDeniedError(f"AWS S3 - Access denied. Status code: {status_code}\nProvided credentials do not have permissions to access S3 resources") from ce
 
-        elif status_code == '404':
-            raise S3NotFoundError(f"AWS S3 - File or bucket not found. Status code: {status_code}") from ce
+        elif status_code in('404', 'NoSuchKey'):
+            logger.info("Metadata not found for %s. Starting fresh.", file_name_on_s3)
+            return {}
 
         else:
             raise S3ServiceError(f"AWS S3 - Client Error occurred! Status code: {status_code}") from ce
@@ -81,6 +82,9 @@ def get_s3_object_metadata(s3client: S3Client,
 def compare_metadata(s3_metadata: dict,
                      file_url: str
                     ) -> bool:
+    
+    if not s3_metadata:
+        return False
 
     try:
 
