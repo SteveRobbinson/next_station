@@ -53,11 +53,13 @@ def get_s3_object_metadata(s3client: S3Client,
 
     try:
         
-        aws_response = s3client.head_object(
+        aws_response = s3client.get_object(
             Bucket = bucket_name,
             Key = file_name_on_s3)
 
-        return aws_response
+        metadata = json.load(aws_response['Body'])
+
+        return metadata
 
     
     except ClientError as ce:
