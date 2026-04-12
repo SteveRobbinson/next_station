@@ -24,6 +24,7 @@ from src.next_station.schemas.worldpop import ApiMetadata, S3Etag
 from pydantic import ValidationError
 from typing import List
 import io
+from pathlib import PurePosixPath
 
 
 def create_s3_client() -> S3Client:
@@ -47,15 +48,15 @@ def create_s3_client() -> S3Client:
 logger = logging.getLogger(__name__)
 
 def get_s3_object_metadata(s3client: S3Client,
-                           bucket_name: str,
-                           file_name_on_s3: str
+                           aws_s3_path: PurePosixPath,
+                           metadata_file_name: str = 'metadata.json'
                            ) -> dict:
 
     try:
         
         aws_response = s3client.get_object(
-            Bucket = bucket_name,
-            Key = file_name_on_s3)
+            Bucket = f"{aws_s3_path}",
+            Key = metadata_file_name)
 
         metadata = json.load(aws_response['Body'])
 
@@ -71,7 +72,7 @@ def get_s3_object_metadata(s3client: S3Client,
             raise S3AccessDeniedError(f"AWS S3 - Access denied. Status code: {status_code}\nProvided credentials do not have permissions to access S3 resources") from ce
 
         elif status_code in('404', 'NoSuchKey'):
-            logger.info("Metadata not found for %s. Starting fresh.", file_name_on_s3)
+            logger.info("Metadata not found for %s. Starting fresh.")
             return {}
 
         else:
@@ -100,8 +101,8 @@ def compare_metadata(s3_metadata: dict,
 
 
 
-def upload_data_to_s3(bucket_name: str,
-                      file_name: str,
+def upload_data_to_s3(bucket_name: PurePosixPath,
+                      file_name: PurePosixPath,
                       object_to_upload: requests.Response | List[io.BytesIO],
                       s3_client: S3Client,
                       metadata: dict | None = None
@@ -111,17 +112,17 @@ def upload_data_to_s3(bucket_name: str,
     to_upload = []
 
     if isinstance(object_to_upload, requests.Response):
-        to_upload.append((file_name, object_to_upload.raw))
+        to_upload.append((f"{file_name}", object_to_upload.raw))
         
     else:
 
         for i, buffer in enumerate(object_to_upload):
-            to_upload.append((f"{file_name}_chunk_{i + 1}.tif", buffer))
+            to_upload.append((f"{file_name}/chunk_{i + 1}.tif", buffer))
 
     
     for key, fileobj in to_upload:
 
-        s3_client.upload_fileobj(Bucket = bucket_name,
+        s3_client.upload_fileobj(Bucket = f"{bucket_name}",
                                  Fileobj = fileobj,
                                  Key = key,
                                  ExtraArgs = extra_args)
@@ -130,10 +131,10 @@ def upload_data_to_s3(bucket_name: str,
 
         metadata_content = json.dumps(metadata).encode('utf-8')
         s3_client.put_object(
-            Bucket = bucket_name,
-            Key = f"{file_name}_metadata.json",
-            Body = metadata_content
-            )
+                Bucket = f"{bucket_name}",
+                Key = f"{file_name}/metadata.json",
+                Body = metadata_content
+                )
 
     return True
 
