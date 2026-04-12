@@ -10,6 +10,9 @@ def runner(api_url: str,
            timeout: int = 60
            ) -> requests.Response:
 
+    if max_retries <= 0:
+        raise ValueError("max retries must be a positive integer")
+
     for i in range(max_retries):
         
         try:
