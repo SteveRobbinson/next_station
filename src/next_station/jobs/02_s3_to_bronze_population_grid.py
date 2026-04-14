@@ -3,7 +3,6 @@ from src.next_station.infrastructure.load_population_grid import load_population
 from src.next_station.core.config import settings
 from src.next_station.infrastructure.databricks import save_df_in_db
 from sedona.spark import SedonaContext
-from pyspark.sql import SparkSession
 from src.next_station.quality.extract_population_grid import extract_population_points
 
 spark_session = get_spark_session(settings.databricks_python_user_name)
