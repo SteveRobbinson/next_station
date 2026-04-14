@@ -7,7 +7,7 @@ s3 = create_s3_client()
 train_stations = fetch_train_stations(settings.train_stations_url,
                                       settings.query_for_train_stations)
 
-upload_data_to_s3(settings.aws_bucket_name,
-                  settings.aws_train_file_name,
+upload_data_to_s3(str(settings.absolute_railway_stations_path.parent),
+                  settings.absolute_railway_stations_path.name,
                   train_stations,
                   s3)

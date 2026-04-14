@@ -39,7 +39,7 @@ if not is_metadata_same:
     
     sliced_dataset = slice_dataset(population_grid)
 
-    upload_data_to_s3(settings.absolute_population_grid_path.parent,
+    upload_data_to_s3(str(settings.absolute_population_grid_path.parent),
                       settings.absolute_population_grid_path.name,
                       sliced_dataset,
                       s3,
