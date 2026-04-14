@@ -7,15 +7,10 @@ from src.next_station.infrastructure.databricks import save_df_in_db
 
 spark_session = get_spark_session(settings.databricks_sql_user_name)
 
-df = load_json_source(spark_session,
-                      (settings.aws_s3_bucket_address,
-                       settings.aws_railway_stations_file_name))
+df = load_json_source(spark_session, settings.aws_railway_station_uri)
 
 df = melt_table(df, settings.aws_railway_file_explode_by)
 
 df = is_df_empty(df)
 
-save_df_in_db(df,
-              (settings.databricks_catalog,
-               settings.databricks_schema,
-               settings.databricks_railway_table))
+save_df_in_db(df, settings.databricks_railway_stations_table_id)
