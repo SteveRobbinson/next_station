@@ -2,6 +2,14 @@ import requests
 from requests.exceptions import HTTPError
 import time
 from src.next_station.core.config import settings
+from src.next_station.core.exceptions import (
+        ApiRequestError,
+        ApiUnauthorizedError,
+        ApiForbiddenRequest,
+        ApiConnectionError,
+        ApiRateLimitError,
+        ApiUnhandledError
+        )
 
 def runner(api_url: str,
            method: str,
