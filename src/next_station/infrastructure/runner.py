@@ -1,5 +1,5 @@
 import requests
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, Timeout, ConnectionError
 import time
 from src.next_station.core.config import settings
 from src.next_station.core.exceptions import (
@@ -8,8 +8,10 @@ from src.next_station.core.exceptions import (
         ApiForbiddenRequestError,
         ApiConnectionError,
         ApiRateLimitError,
-        ApiUnhandledError
+        ApiUnhandledError,
+        ApiTimeoutError
         )
+from src.next_station.infrastructure.utils import _perform_backoff
 
 def runner(api_url: str,
            method: str,
@@ -50,6 +52,14 @@ def runner(api_url: str,
 
             return response
             
+        except (Timeout, ConnectionError) as err:
+
+            if i == max_retries - 1:
+                raise ApiTimeoutError(f"Final attempt {i+1} failed for {api_url}") from err
+
+            _perform_backoff(i)
+            continue
+
         except HTTPError as err:
             
             if response.status_code in (400, 404):
