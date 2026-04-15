@@ -20,21 +20,24 @@ def runner(api_url: str,
 
 
     if max_retries <= 0:
-        raise ValueError("max retries must be a positive integer")
+        raise ValueError("Max retries must be a positive integer")
+
+
+    if payload:
+
+        if method in ('GET', 'HEAD'):
+            kwargs.setdefault('params', payload)
+
+        elif method == 'POST':
+            kwargs.setdefault('data', payload)
+
 
     for i in range(max_retries):
         
         try:
+                
+            response = requests.request(method, url=api_url, allow_redirects=redirect, stream=stream, timeout=timeout, **kwargs)
 
-            if method == 'head':
-                response = requests.head(url = api_url, params = query, allow_redirects = True, timeout = timeout)
-
-            elif method == 'get':
-                response = requests.get(url = api_url, allow_redirects = True, stream = stream, timeout = timeout)
-            
-            elif method == 'post':
-                response = requests.post(url = api_url, data = query, stream = stream, timeout = timeout)
-            
             response.raise_for_status()
 
             return response
