@@ -73,4 +73,7 @@ def runner(api_url: str,
                 time.sleep((i + 1) * 4)
                 continue
 
-    raise RuntimeError(f"WorldPop API - Unhandled HTTPError: {response.status_code}\nDetails: {response.text}") from err
+            else:
+                raise ApiUnhandledError(f"Unhandled HTTPError: {response.status_code}\nDetails: {response.text}") from err
+
+    raise RuntimeError("Unhandled error occured! Try again")
