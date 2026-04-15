@@ -26,7 +26,11 @@ class S3NotFoundError(S3ServiceError):
     pass
 
 # API Errors
-class ApiError(Exception):
+class BaseApiError(Exception):
+    """Base class for API exceptions"""
+    pass
+
+class ApiError(BaseApiError):
     """Base class for API requests related errors """
     def __init__(self, response: requests.Response, title: str ='API Error'):
         self.response = response
@@ -35,7 +39,6 @@ class ApiError(Exception):
 
         message = f"{title}. Status code: {self.status_code}\nDetails: {self.text[:200]}"
         super().__init__(message)
-
 
 class ApiRequestError(ApiError):
     """Raised when the server can't process/find your request"""
@@ -72,5 +75,6 @@ class ApiUnhandledError(ApiError):
     def __init__(self, response):
         super().__init__(response, title="An unhandled error occured!")
 
-
-
+class ApiTimeoutError(BaseApiError):
+    def __init__(self, message: str = "The request timed out!"):
+        super().__init__(message)
