@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "next_station"
+version = "0.1.0"
+
+dependencies = [
+  "apache-sedona==1.8.1",
+  "shapely==2.1.2",
+  "numpy==2.4.2",
+  "notebook==7.5.3",
+  "boto3==1.42.64",
+  "requests==2.32.5",
+  "pydantic==2.12.5",
+  "pydantic-settings==2.13.1",
+  "python-dotenv==1.2.2",
+  "PyYAML==6.0.3",
+  "dbt-databricks==1.11.6"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
