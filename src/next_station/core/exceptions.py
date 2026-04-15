@@ -1,3 +1,4 @@
+# S3 errors
 class S3ServiceError(Exception):
     """Base class for S3 related errors."""
     pass
@@ -21,3 +22,35 @@ class S3AccessDeniedError(S3ServiceError):
 class S3NotFoundError(S3ServiceError):
     """Raised when the S3 object or bucket does not exist (404)."""
     pass
+
+# API Errors
+class ApiErrors(Exception):
+    """Base class for API requests related errors """
+    pass
+
+class ApiRequestError(ApiErrors):
+    """Raised when the server can't process/find your request"""
+    pass
+
+class ApiUnauthorizedError(ApiErrors):
+    """Raised when server rejected your request due to missing or invalid authentication."""
+    pass
+
+class ApiForbiddenRequest(ApiErrors):
+    """Raised when server understood your request but denied access. Usually due to insufficient permissions."""
+    pass
+
+class ApiConnectionError(ApiErrors):
+    """Raised when something broke on the hosting side"""
+    pass
+
+class ApiRateLimitError(ApiErrors):
+    """Raised when you've sent too many requests in a short time."""
+    pass
+
+class ApiUnhandledError(ApiErrors):
+    """Raised when an unhandled error occurs"""
+    pass
+
+
+
