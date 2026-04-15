@@ -36,29 +36,41 @@ class ApiError(Exception):
         message = f"{title}. Status code: {self.status_code}\nDetails: {self.text[:200]}"
         super().__init__(message)
 
-class ApiRequestError(ApiErrors):
+
+class ApiRequestError(ApiError):
     """Raised when the server can't process/find your request"""
-    pass
+    def __init__(self, response):
+        super().__init__(response, title="Server couldn't find/process your request!")
 
-class ApiUnauthorizedError(ApiErrors):
+
+class ApiUnauthorizedError(ApiError):
     """Raised when server rejected your request due to missing or invalid authentication."""
-    pass
+    def __init__(self, response):
+        super().__init__(response, title="The server rejected your request due to missing or invalid authentication")
 
-class ApiForbiddenRequest(ApiErrors):
+
+class ApiForbiddenRequestError(ApiError):
     """Raised when server understood your request but denied access. Usually due to insufficient permissions."""
-    pass
+    def __init__(self, response):
+        super().__init__(response, title="Access denied!")
 
-class ApiConnectionError(ApiErrors):
+
+class ApiConnectionError(ApiError):
     """Raised when something broke on the hosting side"""
-    pass
+    def __init__(self, response):
+        super().__init__(response, title="An error occured on the hosting side!")
 
-class ApiRateLimitError(ApiErrors):
+
+class ApiRateLimitError(ApiError):
     """Raised when you've sent too many requests in a short time."""
-    pass
+    def __init__(self, response):
+        super().__init__(response, title="Too many requests sent!")
 
-class ApiUnhandledError(ApiErrors):
+
+class ApiUnhandledError(ApiError):
     """Raised when an unhandled error occurs"""
-    pass
+    def __init__(self, response):
+        super().__init__(response, title="An unhandled error occured!")
 
 
 
