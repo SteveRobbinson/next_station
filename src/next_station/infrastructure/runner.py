@@ -1,13 +1,16 @@
 import requests
 from requests.exceptions import HTTPError
 import time
+from src.next_station.core.config import settings
 
 def runner(api_url: str,
            method: str,
-           stream: bool | None = None,
-           query: str | None = None,
+           payload: str | None,
+           stream: bool | None,
+           redirect: bool,
+           timeout: int = 60,
            max_retries: int = 3,
-           timeout: int = 60
+           **kwargs
            ) -> requests.Response:
 
     if max_retries <= 0:
