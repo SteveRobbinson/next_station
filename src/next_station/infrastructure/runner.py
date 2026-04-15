@@ -13,6 +13,12 @@ def runner(api_url: str,
            **kwargs
            ) -> requests.Response:
 
+    method = method.upper()
+
+    if method not in settings.allowed_methods:
+        raise(ValueError(f"Method {method} is not supported. Check allowed_methods in config."))
+
+
     if max_retries <= 0:
         raise ValueError("max retries must be a positive integer")
 
