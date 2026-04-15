@@ -24,9 +24,15 @@ class S3NotFoundError(S3ServiceError):
     pass
 
 # API Errors
-class ApiErrors(Exception):
+class ApiError(Exception):
     """Base class for API requests related errors """
-    pass
+    def __init__(self, response):
+        self.response = response
+        self.status_code = response.status_code
+        self.text = response.text
+
+        message = f"API Error: {self.status_code}\n Details: {self.text[:200]}"
+        super().__init__(message)
 
 class ApiRequestError(ApiErrors):
     """Raised when the server can't process/find your request"""
