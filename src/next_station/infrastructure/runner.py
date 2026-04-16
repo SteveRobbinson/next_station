@@ -80,7 +80,7 @@ def runner(api_url: str,
                     else:
                         raise ApiConnectionError(response) from err
 
-                time.sleep((i + 1) * 4)
+                _perform_backoff(i)
                 continue
 
             else:
