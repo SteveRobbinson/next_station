@@ -1,20 +1,69 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pathlib import PurePosixPath
+from pydantic import HttpUrl, BaseModel, computed_field
+from enum import Enum
 
-class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
-    train_stations_url: str
-    population_grid_url: str
-    query_for_train_stations: str
-    absolute_population_grid_path: PurePosixPath
-    absolute_railway_stations_path: PurePosixPath
-    aws_railway_file_explode_by: str
-    absolute_databricks_path: PurePosixPath
-    databricks_railway_stations_table: str
-    databricks_population_grid_table: str
-    databricks_sql_user_name: str
-    databricks_python_user_name: str
-    aws_s3_protocol: str
+class ComputeMode(str, Enum):
+    SQL = 'sql'
+    PYTHON = 'python'
 
-settings = Settings()
+
+class DatabricksConfig(BaseModel):
+    compute_config: str = 'python'
+    catalog: str = 'main'
+    schema_name: str
+    railway_stations_table: str = 'railway_stations'
+    population_grid_table: str = 'population_grid'
+
+    @computed_field
+    def railway_stations_fqn(self) -> str:
+        return f"{self.catalog}.{self.schema_name}.{self.railway_stations_table}"
+
+    @computed_field
+    def population_grid_fqn(self) -> str:
+        return f"{self.catalog}.{self.schema_name}.{self.population_grid_table}"
+
+
+class AWSConfig(BaseModel):
+    s3_protocol: str = 's3://'
+    s3_bucket_name: str
+    s3_railway_stations_file_name: str
+    s3_population_grid_file_name: str
+    railway_file_explode_by: str = 'elements'
+
+    @computed_field
+    def railway_stations_uri(self) -> str:
+        return f"{self.s3_protocol}{self.s3_bucket_name}/{self.s3_railway_stations_file_name}"
+
+    @computed_field
+    def population_grid_uri(self) -> str:
+        return f"{self.s3_protocol}{self.s3_bucket_name}/{self.s3_population_grid_file_name}"
+
+
+class ApiRequestsConfig(BaseModel):
+    allowed_methods: set[str] = {'GET', 'HEAD', 'POST'}
+
+    base_railway_stations_url: HttpUrl
+    payload_for_railway_stations: str
+
+    base_population_grid_url: HttpUrl
+
+
+class AppConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', env_nested_delimiter='__')
+    
+    databricks: DatabricksConfig
+    aws: AWSConfig
+    api: ApiRequestsConfig
+
+
+    @classmethod
+    def load_compute_config(cls, mode: ComputeMode):
+        configs = {
+                ComputeMode.SQL: 'sql-dev',
+                ComputeMode.PYTHON: 'python-dev'
+                }
+
+        return cls(databricks={'compute_config': configs[mode]}) # type: ignore
+
+settings = AppConfig() # type: ignore
