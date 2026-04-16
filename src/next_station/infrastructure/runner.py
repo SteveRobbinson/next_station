@@ -1,6 +1,5 @@
 import requests
 from requests.exceptions import HTTPError, Timeout, ConnectionError
-import time
 from src.next_station.core.config import settings
 from src.next_station.core.exceptions import (
         ApiRequestError,
@@ -15,9 +14,9 @@ from src.next_station.infrastructure.utils import _perform_backoff
 
 def runner(api_url: str,
            method: str,
-           payload: str | None,
-           stream: bool | None,
-           redirect: bool,
+           payload: str | None = None,
+           stream: bool = False,
+           redirect: bool = False,
            timeout: int = 60,
            max_retries: int = 3,
            **kwargs
@@ -25,7 +24,7 @@ def runner(api_url: str,
 
     method = method.upper()
 
-    if method not in settings.allowed_methods:
+    if method not in settings.api.allowed_methods:
         raise(ValueError(f"Method {method} is not supported. Check allowed_methods in config."))
 
 
