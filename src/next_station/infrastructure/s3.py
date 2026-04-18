@@ -2,16 +2,7 @@ import requests
 import json
 import boto3
 from mypy_boto3_s3 import S3Client
-from botocore.exceptions import (
-        BotoCoreError,
-        ClientError
-        )
-
-from src.next_station.core.exceptions import (
-    S3ServiceError,
-    S3AccessDeniedError
-)
-
+from src.next_station.core.exceptions import S3ServiceError
 from .runner import runner
 from src.next_station.schemas.worldpop import ApiMetadata, S3Etag
 from pydantic import ValidationError
@@ -37,29 +28,15 @@ def get_s3_object_metadata(s3client: S3Client,
     try:
         
         aws_response = s3client.get_object(
-            Bucket = f"{aws_s3_path}",
+            Bucket = aws_s3_path,
             Key = metadata_file_name)
 
         metadata = json.load(aws_response['Body'])
 
         return metadata
-
     
-    except ClientError as ce:
-        
-
-        status_code = ce.response['Error']['Code']
-        
-        if status_code == '403':
-            raise S3AccessDeniedError(f"AWS S3 - Access denied. Status code: {status_code}\nProvided credentials do not have permissions to access S3 resources") from ce
-
-        elif status_code in('404', 'NoSuchKey'):
-            logger.info("Metadata not found for %s. Starting fresh.")
-            return {}
-
-        else:
-            raise S3ServiceError(f"AWS S3 - Client Error occurred! Status code: {status_code}") from ce
-
+    except Exception as err:
+        raise S3ServiceError.from_exception(err) from err
 
 
 def compare_metadata(s3_metadata: dict,
