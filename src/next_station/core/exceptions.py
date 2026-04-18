@@ -4,7 +4,13 @@ from botocore.exceptions import (
         ClientError,
         NoCredentialsError,
         NoRegionError,
-        UnknownServiceError
+        UnknownServiceError,
+        EndpointConnectionError,
+        ReadTimeoutError,
+        ConnectTimeoutError,
+        ProxyConnectionError,
+        SSLError,
+        CredentialRetrievalError
         )
 from typing import Self
 
@@ -25,13 +31,19 @@ class S3ServiceError(Exception):
 class S3ConfigError(S3ServiceError):
     """Raised when AWS credentials or region are missing/invalid."""
 
-    error_map: dict[type[BotoCoreError | ClientError], str] = {
+    error_map: dict[type[BotoCoreError], str] = {
             NoCredentialsError: "AWS S3 - No credentials found. Check your AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY",
             NoRegionError: "AWS S3 - Region for client S3 not specified!",
-            UnknownServiceError: "AWS S3 - Incorrect service name!"
+            UnknownServiceError: "AWS S3 - Incorrect service name!",
+            EndpointConnectionError: "AWS S3 - Network connection error. Could not reach the service endpoint.",
+            ReadTimeoutError: "AWS S3 - Read timeout occurred while receiving data from the server.",
+            ConnectTimeoutError: "AWS S3 - Connection timeout. The server took too long to respond.",
+            ProxyConnectionError: "AWS S3 - Proxy connection failed. Check your proxy settings.",
+            SSLError: "AWS S3 - SSL certificate validation failed.",
+            CredentialRetrievalError: "AWS S3 - Failed to retrieve credentials from the configured provider."
             }
 
-    def __init__(self, error: BotoCoreError | ClientError):
+    def __init__(self, error: BotoCoreError):
         self.error = error
         message = self.error_map.get(
                 type(error), f"Configuration error occurred: {error}"
