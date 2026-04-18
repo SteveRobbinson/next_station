@@ -5,8 +5,7 @@ from mypy_boto3_s3 import S3Client
 from src.next_station.core.exceptions import S3ServiceError
 from .runner import runner
 from src.next_station.schemas.worldpop import ApiMetadata, S3Etag
-from pydantic import ValidationError
-from typing import List
+from typing import List, Any
 import io
 
 
@@ -67,26 +66,28 @@ def upload_data_to_s3(bucket_name: str,
                       ) -> bool:
 
     extra_args = {'Metadata': metadata} if metadata else {}
-    to_upload = []
+    to_upload: List[tuple[str, Any]] = []
 
     if isinstance(object_to_upload, requests.Response):
-        to_upload.append((file_name, object_to_upload.raw))
-        
-    else:
+        if object_to_upload.raw:
+            to_upload.append((file_name, object_to_upload.raw))
 
+        
+    elif isinstance(object_to_upload, list):
         for i, buffer in enumerate(object_to_upload):
             to_upload.append((f"{file_name}/chunk_{i + 1}.tif", buffer))
 
+    else:
+        raise ValueError(f"Expected requests.Response or List[io.BytesIO] as input. Got: {type(object_to_upload)}.")
     
-    for key, fileobj in to_upload:
 
+    for key, fileobj in to_upload:
         s3_client.upload_fileobj(Bucket = bucket_name,
                                  Fileobj = fileobj,
                                  Key = key,
                                  ExtraArgs = extra_args)
         
     if metadata:
-
         metadata_content = json.dumps(metadata).encode('utf-8')
         s3_client.put_object(
                 Bucket = bucket_name,
@@ -95,4 +96,3 @@ def upload_data_to_s3(bucket_name: str,
                 )
 
     return True
-
