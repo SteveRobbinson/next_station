@@ -11,12 +11,19 @@ from typing import Self
 # S3 errors
 class S3ServiceError(Exception):
     """Base class for S3 related errors."""
-    pass
+    
+    @classmethod
+    def from_exception(cls, error: Exception) -> "Self | S3ConfigError":
+        
+        if isinstance(error, (BotoCoreError, ClientError)):
+            return S3ConfigError(error)
+
+        message = f"An unexpected error occurred during AWS S3 initialization! {error}"
+        return cls(message)
 
 
 class S3ConfigError(S3ServiceError):
     """Raised when AWS credentials or region are missing/invalid."""
-    pass
 
     error_map: dict[type[BotoCoreError | ClientError], str] = {
             NoCredentialsError: "AWS S3 - No credentials found. Check your AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY",
