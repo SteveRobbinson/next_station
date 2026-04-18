@@ -14,6 +14,7 @@ from botocore.exceptions import (
         )
 from typing import Self
 
+
 # S3 errors
 class S3ServiceError(Exception):
     """Base class for S3 related errors."""
@@ -57,15 +58,6 @@ class S3ConfigError(S3ServiceError):
 
         super().__init__(message)
 
-
-class S3AccessDeniedError(S3ServiceError):
-    """Raised when the provided credentials lack permissions (403)."""
-    pass
-
-
-class S3NotFoundError(S3ServiceError):
-    """Raised when the S3 object or bucket does not exist (404)."""
-    pass
 
 # API Errors
 class BaseApiError(Exception):
