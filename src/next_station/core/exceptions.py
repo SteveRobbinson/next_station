@@ -21,10 +21,16 @@ class S3ServiceError(Exception):
     @classmethod
     def from_exception(cls, error: Exception) -> "Self | S3ConfigError":
         
-        if isinstance(error, (BotoCoreError, ClientError)):
+        if isinstance(error, BotoCoreError):
             return S3ConfigError(error)
 
-        message = f"An unexpected error occurred during AWS S3 initialization! {error}"
+        if isinstance(error, ClientError):
+            code = error.response.get('Error', {}).get('Code', 'Unknown')
+            message = f"AWS S3 Server Error [{code}]: {error}"
+
+        else:
+            message = f"An unexpected error occurred during AWS S3 initialization! {error}"
+
         return cls(message)
 
 
