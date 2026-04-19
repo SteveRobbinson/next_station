@@ -9,8 +9,10 @@ new_databricks = settings.databricks.model_copy(update={'compute_config': 'sql'}
 
 spark_session = get_spark_session(new_databricks.compute_config)
 
-df = melt_table(df, settings.aws_railway_file_explode_by)
+df = load_json_source(spark_session, settings.aws.railway_stations_uri)
+
+df = melt_table(df, settings.aws.railway_file_explode_by)
 
 df = is_df_empty(df)
 
-save_df_in_db(df, settings.databricks_railway_stations_table_id)
+save_df_in_db(df, settings.databricks.railway_stations_fqn)
