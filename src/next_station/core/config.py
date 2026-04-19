@@ -15,10 +15,12 @@ class DatabricksConfig(BaseModel):
     railway_stations_table: str = 'railway_stations'
     population_grid_table: str = 'population_grid'
 
+    @property
     @computed_field
     def railway_stations_fqn(self) -> str:
         return f"{self.catalog}.{self.schema_name}.{self.railway_stations_table}"
 
+    @property
     @computed_field
     def population_grid_fqn(self) -> str:
         return f"{self.catalog}.{self.schema_name}.{self.population_grid_table}"
@@ -31,10 +33,12 @@ class AWSConfig(BaseModel):
     s3_population_grid_file_name: str
     railway_file_explode_by: str = 'elements'
 
+    @property
     @computed_field
     def railway_stations_uri(self) -> str:
         return f"{self.s3_protocol}{self.s3_bucket_name}/{self.s3_railway_stations_file_name}"
 
+    @property
     @computed_field
     def population_grid_uri(self) -> str:
         return f"{self.s3_protocol}{self.s3_bucket_name}/{self.s3_population_grid_file_name}"
