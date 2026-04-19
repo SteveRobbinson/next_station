@@ -23,3 +23,6 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src*"]
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
