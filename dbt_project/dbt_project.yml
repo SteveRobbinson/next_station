@@ -14,6 +14,9 @@ seeds:
   dbt_project:
     +schema: raw
 
+vars:
+  h3_resolution: 8
+
 models:
   dbt_project:
     silver:
