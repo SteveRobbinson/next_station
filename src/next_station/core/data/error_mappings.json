@@ -1,5 +1,5 @@
 {
-  "aws_config_errors": {
+  "status_description": {
     "400": "Bad Request. The parameters provided are invalid or malformed.",
     "401": "Unauthorized. Authentication is required or has failed. Check your credentials.",
     "403": "Forbidden. You do not have permission to access this resource or perform this action.",
@@ -14,11 +14,17 @@
     "504": "Gateway Timeout. The upstream server failed to respond in time.",
     "0": "Unknown Error. An unmapped error occurred while processing the request."
   },
-  "aws_response_errors": {
+  "aws_error_to_status": {
     "UnrecognizedClientException": 401,
     "ExpiredToken": 401,
     "InvalidClientTokenId": 401,
     "NotAuthorizedException": 401,
+    "TokenRefreshRequired": 401,
+    "NoCredentialsError": 401,
+    "PartialCredentialsError": 401,
+    "CredentialRetrievalError": 401,
+    "ProfileNotFound": 401,
+    "SignatureDoesNotMatch": 401,
     "AccessDenied": 403,
     "AccessDeniedException": 403,
     "NoSuchBucket": 404,
@@ -38,6 +44,9 @@
     "MissingParameter": 400,
     "InternalFailure": 500,
     "InternalServerError": 500,
-    "ServiceUnavailable": 503
+    "ServiceUnavailable": 503,
+    "EndpointConnectionError": 503,
+    "ConnectTimeoutError": 504,
+    "ReadTimeoutError": 504
   }
 }
