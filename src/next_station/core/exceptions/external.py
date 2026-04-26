@@ -64,11 +64,10 @@ class AWSConfigError(AWSServiceError):
 
 class AWSResponseError(AWSServiceError):
     source = '### AWS RESPONSE ERROR ###'
-    aws_to_http = aws_response_errors
     
     def __init__(self, error: ClientError):
         self.error = error
-        aws_code = error.response.get('Error', {}).get('Code', 'Unknown')
-        status_code = self.aws_to_http.get(aws_code, 500)
-    
-        super().__init__(self.source, status_code, details=aws_code)  
+        status_code = error.response['ResponseMetadata']['HTTPStatusCode']
+        details = error.response['Error']['Code']
+
+        super().__init__(self.source, status_code, details)
