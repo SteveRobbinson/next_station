@@ -2,7 +2,8 @@ import requests
 from typing import Self
 from src.next_station.core.exceptions.base import UnifiedAPIError
 from botocore.exceptions import BotoCoreError, ClientError
-from src.next_station.core.exceptions.mappings import aws_config_errors, aws_response_errors
+from next_station.core.resources import get_error_mapping
+from next_station.core.constants import ErrorCategory
 
 ### API RESPONSE ###
 class APIResponseError(UnifiedAPIError):
@@ -52,24 +53,21 @@ class AWSServiceError(UnifiedAPIError):
 
 class AWSConfigError(AWSServiceError):
     source = '### AWS CONFIG ERROR ###'
-    error_map = aws_config_errors
 
     def __init__(self, error: BotoCoreError):
         self.error = error
-        status_code = 401
-        details = str(error)
+        status_code = get_error_mapping(ErrorCategory.AWS_TO_HTTP, type(error).__name__, 500)
 
-        super().__init__(self.source, status_code, details)
+        super().__init__(self.source, status_code, str(error))
 
 
 
 class AWSResponseError(AWSServiceError):
     source = '### AWS RESPONSE ERROR ###'
-    aws_to_http = aws_response_errors
     
     def __init__(self, error: ClientError):
         self.error = error
-        aws_code = error.response.get('Error', {}).get('Code', 'Unknown')
-        status_code = self.aws_to_http.get(aws_code, 500)
-    
-        super().__init__(self.source, status_code, details=aws_code)  
+        status_code = error.response['ResponseMetadata']['HTTPStatusCode']
+        details = error.response['Error']['Code']
+
+        super().__init__(self.source, status_code, details)
