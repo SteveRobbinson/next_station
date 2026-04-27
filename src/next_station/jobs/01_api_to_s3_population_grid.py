@@ -1,14 +1,14 @@
-from src.next_station.infrastructure.s3 import (
+from next_station.infrastructure.s3 import (
     create_s3_client,
     get_s3_object_metadata,
     compare_metadata,
     upload_data_to_s3
 )
-from src.next_station.core.config import settings
-from src.next_station.schemas.worldpop import ApiMetadata
-from src.next_station.providers.get_file_url import get_file_url
-from src.next_station.providers.fetch_population_grid import fetch_population_grid
-from src.next_station.infrastructure.slice_dataset import slice_dataset
+from next_station.core.config.settings import settings
+from next_station.schemas.worldpop import ApiMetadata
+from next_station.providers.get_file_url import get_file_url
+from next_station.providers.fetch_population_grid import fetch_population_grid
+from next_station.infrastructure.slice_dataset import slice_dataset
 
 s3 = create_s3_client()
 

@@ -1,6 +1,6 @@
 import requests
 from typing import Self
-from src.next_station.core.exceptions.base import UnifiedAPIError
+from next_station.core.exceptions.base import UnifiedAPIError
 from botocore.exceptions import BotoCoreError, ClientError
 from next_station.core.resources import get_error_mapping
 from next_station.core.constants import ErrorCategory

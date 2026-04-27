@@ -1,6 +1,6 @@
-from src.next_station.core.spark import get_spark_session
-from src.next_station.core.config import settings
-from src.next_station.infrastructure.utils import consolidate_to_single_parquet
+from next_station.core.spark import get_spark_session
+from next_station.core.config.settings import settings
+from next_station.infrastructure.utils import consolidate_to_single_parquet
 
 spark = get_spark_session(settings.databricks.compute_config)
 

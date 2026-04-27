@@ -1,7 +1,7 @@
-from pydantic import BaseModel, BeforeValidator, Field, ConfigDict, AliasChoices, AfterValidator, ValidationError, AliasPath
-from typing import Annotated
+from pydantic import BaseModel, BeforeValidator, Field, ConfigDict, AliasChoices, AfterValidator, AliasPath
+from typing import Annotated, Any
 
-def ensure_one_element(value: any) -> str:
+def ensure_one_element(value: Any) -> str:
 
     if isinstance(value, list):
         
@@ -30,7 +30,7 @@ class GetFileUrl(BaseModel):
 
 ### Extracting metadata/ETag from a api head request
 
-def ensure_string(value: any) -> str:
+def ensure_string(value: Any) -> str:
 
     if isinstance(value, str):
         return value.strip().strip('"')

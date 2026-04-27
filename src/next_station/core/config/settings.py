@@ -1,9 +1,9 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import computed_field
-from src.next_station.core.config.databricks import DatabricksConfig
-from src.next_station.core.config.aws import AWSConfig
-from src.next_station.core.config.api import ApiRequestsConfig
-from src.next_station.core.config.base import ComputeMode, ExportTask
+from next_station.core.config.databricks import DatabricksConfig
+from next_station.core.config.aws import AWSConfig
+from next_station.core.config.api import ApiRequestsConfig
+from next_station.core.config.base import ComputeMode, ExportTask
 
 
 class AppConfig(BaseSettings):

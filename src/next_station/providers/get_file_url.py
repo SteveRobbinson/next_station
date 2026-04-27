@@ -1,5 +1,5 @@
-from src.next_station.infrastructure.runner import runner
-from src.next_station.schemas.worldpop import GetFileUrl
+from next_station.infrastructure.runner import runner
+from next_station.schemas.worldpop import GetFileUrl
 
 def get_file_url(api_url: str,
                  index: int = -1,

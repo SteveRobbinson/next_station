@@ -3,10 +3,10 @@ import json
 import boto3
 from mypy_boto3_s3 import S3Client
 from .runner import runner
-from src.next_station.schemas.worldpop import ApiMetadata, S3Etag
+from next_station.schemas.worldpop import ApiMetadata, S3Etag
 from typing import List, Any
 import io
-from src.next_station.core.exceptions.external import AWSServiceError
+from next_station.core.exceptions.external import AWSServiceError
 
 
 def create_s3_client() -> S3Client:

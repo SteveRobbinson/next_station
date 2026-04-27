@@ -1,9 +1,9 @@
 import requests
 from requests.exceptions import HTTPError, Timeout, ConnectionError
-from src.next_station.core.config import settings
-from src.next_station.infrastructure.utils import _perform_backoff
-from src.next_station.core.exceptions.external import APITimeoutError, APIResponseError
-from src.next_station.core.exceptions.base import UnifiedAPIError
+from next_station.core.config.settings import settings
+from next_station.infrastructure.utils import _perform_backoff
+from next_station.core.exceptions.external import APITimeoutError, APIResponseError
+from next_station.core.exceptions.base import UnifiedAPIError
 
 def runner(api_url: str,
            method: str,

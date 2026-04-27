@@ -2,7 +2,6 @@ import rasterio
 from rasterio.io import MemoryFile
 from typing import List
 from rasterio.windows import Window
-from pyspark.sql import DataFrame
 import requests
 import io
 
