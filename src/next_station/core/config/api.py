@@ -7,4 +7,5 @@ class ApiRequestsConfig(BaseModel):
     payload_for_railway_stations: str
 
     base_population_grid_url: HttpUrl
+    headers: dict[str, str]
 
