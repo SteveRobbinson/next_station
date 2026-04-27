@@ -8,6 +8,7 @@ from next_station.core.exceptions.base import UnifiedAPIError
 def runner(api_url: str,
            method: str,
            payload: str | None = None,
+           headers: dict | None = None,
            stream: bool = False,
            redirect: bool = False,
            timeout: int = 60,
@@ -33,7 +34,7 @@ def runner(api_url: str,
     for i in range(max_retries):
         
         try:
-            response = requests.request(method, url=api_url, allow_redirects=redirect, stream=stream, timeout=timeout, **kwargs)
+            response = requests.request(method, url=api_url, headers=settings.api.headers, allow_redirects=redirect, stream=stream, timeout=timeout, **kwargs)
             response.raise_for_status()
             return response
 
