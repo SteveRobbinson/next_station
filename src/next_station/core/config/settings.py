@@ -4,10 +4,13 @@ from next_station.core.config.databricks import DatabricksConfig
 from next_station.core.config.aws import AWSConfig
 from next_station.core.config.api import ApiRequestsConfig
 from next_station.core.config.base import ComputeMode, ExportTask
+from pathlib import Path
 
+ROOT_DIR = Path(__file__).resolve().parents[4]
+ENV_PATH = ROOT_DIR / '.env'
 
 class AppConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', env_nested_delimiter='__')
+    model_config = SettingsConfigDict(env_file=ENV_PATH, env_file_encoding='utf-8', env_nested_delimiter='__')
     
     databricks: DatabricksConfig
     aws: AWSConfig
