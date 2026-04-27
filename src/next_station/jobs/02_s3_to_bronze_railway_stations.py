@@ -4,10 +4,11 @@ from next_station.quality.df_empty import is_df_empty
 from next_station.quality.melt_table import melt_table
 from next_station.core.config.settings import settings
 from next_station.infrastructure.databricks import save_df_in_db
+from next_station.core.config.base import ComputeMode
 
-new_databricks = settings.databricks.model_copy(update={'compute_config': 'sql'})
+settings = settings.load_compute_config(ComputeMode.SQL) 
 
-spark_session = get_spark_session(new_databricks.compute_config)
+spark_session = get_spark_session(settings.databricks.compute_config)
 
 df = load_json_source(spark_session, settings.aws.railway_stations_uri)
 
