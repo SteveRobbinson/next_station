@@ -12,4 +12,5 @@ variables:
 
 targets:
   prod:
-    root_path: ${var.volume_path}/${bundle.name}
+    workspace:
+      root_path: ${var.volume_path}/${bundle.name}/${bundle.version}
