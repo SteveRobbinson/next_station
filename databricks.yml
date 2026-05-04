@@ -5,6 +5,7 @@ artifacts:
   default:
     type: whl
     path: .
+    build: "python3 -m build --wheel"
 
 variables:
   volume_path:
