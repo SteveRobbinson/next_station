@@ -1,0 +1,15 @@
+bundle:
+  name: geo-etl-package
+
+artifacts:
+  default:
+    type: whl
+    path: .
+
+variables:
+  volume_path:
+    description: "Target path for python wheel"
+
+targets:
+  prod:
+    root_path: ${var.volume_path}/${bundle.name}
