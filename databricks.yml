@@ -13,4 +13,4 @@ variables:
 targets:
   prod:
     workspace:
-      root_path: ${var.volume_path}/${bundle.name}
+      artifact_path: ${var.volume_path}/${bundle.name}
