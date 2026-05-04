@@ -9,23 +9,23 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     
-  env:
-    DATABRICKS_HOST: ${{ var.DATABRICKS_HOST }}
-    DATABRICKS_BUNDLE_VOLUME_PATH: ${{ var.DATABRICKS_BUNDLE_VOLUME_PATH }}
-    DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
-    DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+    env:
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_BUNDLE_VOLUME_PATH: ${{ vars.DATABRICKS_BUNDLE_VOLUME_PATH }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
 
-  steps:
-    - uses: actions/checkout@v6
+    steps:
+      - uses: actions/checkout@v6
 
-    - name: Setup python
-      uses: actions/setup-python@v6
-      with:
-        python-version: '3.12'
+      - name: Setup python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
 
-    - name: Install Databricks CLI
-      run: |
-        curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
-    - name: Deploy bundle
-      run: databricks bundle deploy -t prod
+      - name: Deploy bundle
+        run: databricks bundle deploy -t prod
