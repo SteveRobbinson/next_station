@@ -43,7 +43,7 @@ class AWSServiceError(UnifiedAPIError):
     """Base class for AWS related errors"""
     
     def __init__(self, source, status_code: int, details: str):
-        super().__init__(self.source, self.status_code, self.details)
+        super().__init__(source, status_code, details)
     
     @classmethod
     def from_exception(cls, error: Exception) -> "Self | AWSConfigError | AWSResponseError":
@@ -64,7 +64,7 @@ class AWSConfigError(AWSServiceError):
         self.error = error
         status_code = get_error_mapping(ErrorCategory.AWS_TO_HTTP, type(error).__name__, 500)
 
-        super().__init__(self.source, status_code, str(error))
+        super().__init__(self.source, int(status_code), str(error))
 
 
 
