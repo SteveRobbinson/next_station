@@ -1,6 +1,6 @@
 import requests
 from typing import Self
-from next_station.core.exceptions.base import UnifiedAPIError
+from next_station.core.exceptions.base import UnifiedAPIError, InfrastructureError
 from botocore.exceptions import BotoCoreError, ClientError
 from next_station.core.resources import get_error_mapping
 from next_station.core.constants import ErrorCategory
@@ -39,7 +39,7 @@ class APITimeoutError(UnifiedAPIError):
 
 
 ### AWS SERVICE ERROR ###
-class AWSServiceError(UnifiedAPIError):
+class AWSServiceError(InfrastructureError):
     """Base class for AWS related errors"""
     
     def __init__(self, source, status_code: int, details: str):
