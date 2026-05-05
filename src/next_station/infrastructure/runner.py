@@ -1,9 +1,12 @@
+import logging
 import requests
 from requests.exceptions import HTTPError, Timeout, ConnectionError
 from next_station.core.config.settings import settings
 from next_station.infrastructure.utils import _perform_backoff
 from next_station.core.exceptions.external import APITimeoutError, APIResponseError
 from next_station.core.exceptions.base import UnifiedAPIError
+
+logger = logging.getLogger(__name__)
 
 def runner(api_url: str,
            method: str,
@@ -36,6 +39,7 @@ def runner(api_url: str,
         try:
             response = requests.request(method, url=api_url, headers=settings.api.headers, allow_redirects=redirect, stream=stream, timeout=timeout, **kwargs)
             response.raise_for_status()
+            logger.info(f"Request to {api_url} succeeded")
             return response
 
 
@@ -43,6 +47,7 @@ def runner(api_url: str,
             if i == max_retries - 1:
                 raise APITimeoutError(api_url, str(err)) from err
 
+            logger.warning(f"Attempt {i + 1} failed (timeout). Retrying...")
             _perform_backoff(i)
             continue
 
@@ -51,6 +56,7 @@ def runner(api_url: str,
             status_code = err.response.status_code
 
             if status_code in [429, 500, 501, 502, 503, 504] and i < max_retries - 1:
+                logger.warning(f"Attempt {i + 1} failed with status {status_code}. Retrying...")
                 _perform_backoff(i)
                 continue
 
