@@ -9,10 +9,16 @@ from next_station.core.constants import ErrorCategory
 class APIResponseError(UnifiedAPIError):
     source = '### API ###'
 
-    def __init__(self, response: requests.Response):
+    def __init__(self, response: requests.Response | None):
         self.response = response
-        status_code = int(getattr(response, 'status_code', 500))
-        reason = getattr(response, 'reason', 'Unknown')
+
+        if response:
+            status_code = int(getattr(response, 'status_code', 500))
+            reason = getattr(response, 'reason', 'Unknown')
+
+        else:
+            status_code=500
+            reason='Request failed to reach the destination. Connection was interrupted or timed out before a response was generated.'
 
         super().__init__(self.source, status_code, details=reason)
 
