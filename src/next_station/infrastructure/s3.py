@@ -1,3 +1,4 @@
+import logging
 import requests
 import json
 import boto3
@@ -7,12 +8,19 @@ from next_station.schemas.worldpop import ApiMetadata, S3Etag
 from typing import List, Any
 import io
 from next_station.core.exceptions.external import AWSServiceError
+from next_station.core.config.settings import settings
 
+logger = logging.getLogger(__name__)
 
 def create_s3_client() -> S3Client:
 
+    logger.info("Started creating S3 client")
+
     try:
-        return boto3.client('s3')
+        s3 = boto3.client('s3')
+        s3.head_bucket(Bucket=settings.aws.s3_bucket_name)
+        logger.info("Successfully created S3 client")
+        return s3
     
     except Exception as err:
         raise AWSServiceError.from_exception(err) from err
