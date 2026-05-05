@@ -1,4 +1,4 @@
-class UnifiedAPIError(Exception):
+class BaseAppError(Exception):
     def __init__(self, source: str, status_code: int, details: str):
         self.source = source
         self.status_code = status_code
@@ -7,3 +7,9 @@ class UnifiedAPIError(Exception):
         title = f"{source} - Status code: {status_code}\nDetails: {details}"
 
         super().__init__(title)
+
+class UnifiedAPIError(BaseAppError):
+    pass
+
+class InfrastructureError(BaseAppError):
+    pass
