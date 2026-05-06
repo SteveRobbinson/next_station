@@ -1,3 +1,4 @@
+import logging
 from next_station.infrastructure.s3 import (
     create_s3_client,
     get_s3_object_metadata,
@@ -9,27 +10,57 @@ from next_station.schemas.worldpop import ApiMetadata
 from next_station.providers.get_file_url import get_file_url
 from next_station.providers.fetch_population_grid import fetch_population_grid
 from next_station.infrastructure.slice_dataset import slice_dataset
+from next_station.core.exceptions.base import BaseAppError, InfrastructureError, UnifiedAPIError
 
-s3 = create_s3_client()
+logger = logging.getLogger(__name__)
 
-population_grid_file_url = get_file_url(str(settings.api.base_population_grid_url))
+def ingest_population_grid_to_s3():
+    logger.info('Starting Population Grid job')
 
-s3_object_metadata = get_s3_object_metadata(s3,
-                                            settings.aws.s3_bucket_name)
+    try:
 
-is_metadata_same = compare_metadata(s3_object_metadata, population_grid_file_url)
+        s3 = create_s3_client()
+        population_grid_file_url = get_file_url(str(settings.api.base_population_grid_url))
+
+        logger.info(f"Checking for updates at: {population_grid_file_url}")
+        s3_object_metadata = get_s3_object_metadata(s3, settings.aws.s3_bucket_name)
+        is_metadata_same = compare_metadata(s3_object_metadata, population_grid_file_url)
+
+        if not is_metadata_same:
+            logger.info('Change detected. Fetching and processing new population grid...')
+            population_grid = fetch_population_grid(population_grid_file_url)
+            metadata = {'ETag': ApiMetadata(**population_grid.headers).etag}
+            
+            sliced_dataset = slice_dataset(population_grid)
+
+            upload_data_to_s3(settings.aws.s3_bucket_name,
+                              settings.aws.s3_population_grid_file_name,
+                              sliced_dataset,
+                              s3,
+                              metadata)
+
+            logger.info('Successfully updated population grid in S3.')
+
+        else:
+            logger.info('Metadata is identical. Skipping update to save resources.')
 
 
-if not is_metadata_same:
+    except (UnifiedAPIError, InfrastructureError) as known_err:
 
-    population_grid = fetch_population_grid(population_grid_file_url)
+            logger.error(f"Job failed due to known error in {known_err.source}: {known_err.details}")
+            raise
 
-    metadata = {'ETag': ApiMetadata(**population_grid.headers).etag}
-    
-    sliced_dataset = slice_dataset(population_grid)
 
-    upload_data_to_s3(settings.aws.s3_bucket_name,
-                      settings.aws.s3_population_grid_file_name,
-                      sliced_dataset,
-                      s3,
-                      metadata)
+    except Exception as err:
+
+        msg = "Unexpected failure in Population Grid sync job"
+        logger.exception(msg)
+        raise BaseAppError(
+            source="### PopulationGridJob ###",
+            status_code=500,
+            details=f"{msg}: {str(err)}"
+        ) from err
+
+
+if __name__ == "__main__":
+    ingest_population_grid_to_s3()
