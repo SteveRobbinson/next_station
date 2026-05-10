@@ -15,3 +15,31 @@ targets:
   prod:
     workspace:
       artifact_path: ${var.volume_path}/${bundle.name}
+
+resources:
+  jobs:
+    etl_geo_job:
+      name: "ETL Geo Job"
+      job_clusters:
+        - job_cluster_key: "databricks_job_cluster"
+          new_cluster:
+            cluster_name: "Job cluster"
+            spark_version: "17.3.x-scala2.13"
+            node_type_id: "r5d.large"
+            num_workers: 2
+            aws_attributes:
+              availability: "SPOT_WITH_FALLBACK"
+              first_on_demand: 1
+            spark_conf:
+              "spark.serializer": "org.apache.spark.serializer.KryoSerializer",
+              "spark.kryo.registrator": "org.apache.sedona.viz.core.Serde.SedonaVizKryoRegistrator",
+              "spark.sql.extensions": "org.apache.sedona.viz.sql.SedonaVizExtensions,org.apache.sedona.sql.SedonaSqlExtensions",
+              "spark.kryoserializer.buffer.max": "2047m",
+              "spark.sql.sedona.raster.serialization.kryo": "true"
+          data_security_mode: "SINGLE_USER"
+        libraries:
+          - whl: "/Volumes/main/utility/packages/geo-etl-package/.internal/next_station-0.1.0-py3-none-any.whl"
+          - maven:
+              coordinates: "org.apache.sedona:sedona-spark-shaded-4.0_2.13:1.8.1"
+          - maven:
+              coordinates: "org.datasyslab:geotools-wrapper:1.8.0-33.1"
