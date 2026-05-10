@@ -7,10 +7,10 @@ name = "next_station"
 version = "0.1.0"
 
 [project.scripts]
-ingest_railway_stations = "next_station.jobs.01_api_to_s3_railway_stations:run"
-preprocess_railway_stations = "next_station.jobs.02_s3_to_bronze_railway_stations:run"
-ingest_population_grid = "next_station.jobs.01_api_to_s3_population_grid:run"
-preprocess_population_grid = "next_station.jobs.02_s3_to_bronze_population_grid:run"
+ingest_railway_stations = "next_station.jobs.01_api_to_s3_railway_stations:ingest_railway_stations_to_s3"
+preprocess_railway_stations = "next_station.jobs.02_s3_to_bronze_railway_stations:load_railway_stations_to_databricks"
+ingest_population_grid = "next_station.jobs.01_api_to_s3_population_grid:ingest_population_grid_to_s3"
+preprocess_population_grid = "next_station.jobs.02_s3_to_bronze_population_grid:load_population_grid_to_databricks"
 
 dependencies = [
   "apache-sedona==1.8.1",
