@@ -45,3 +45,11 @@ resources:
             "spark.kryoserializer.buffer.max": "2047m"
             "spark.sql.sedona.raster.serialization.kryo": "true"
           data_security_mode: "SINGLE_USER"
+      tasks:
+        - task_key: "ingest_railway_stations"
+          job_cluster_key: "databricks_geo_cluster"
+          python_wheel_task:
+            package_name: "next_station"
+            entry_point: "ingest_railway_station"
+          libraries:
+            - whl: ${artifacts.default.target}
