@@ -45,11 +45,46 @@ resources:
             "spark.kryoserializer.buffer.max": "2047m"
             "spark.sql.sedona.raster.serialization.kryo": "true"
           data_security_mode: "SINGLE_USER"
+
       tasks:
+        ### Railway Stations Pipeline ###
         - task_key: "ingest_railway_stations"
           job_cluster_key: "databricks_geo_cluster"
           python_wheel_task:
             package_name: "next_station"
             entry_point: "ingest_railway_station"
           libraries:
-            - whl: ${artifacts.default.target}
+            - whl: .
+
+        - task_key: "preprocess_railway_stations"
+          job_cluster_key: "databricks_geo_cluster"
+          depends_on:
+            - task_key: "preprocess_railway_stations"
+          python_wheel_task:
+            package_name: "next_station"
+            entry_point: "preprocess_railway_stations"
+          libraries:
+            - whl: .
+
+        ### Population Grid Pipeline ####
+        - task_key: "ingest_population_grid"
+          job_cluster_key: "databricks_geo_cluster"
+          python_wheel_task:
+            package_name: "next_station"
+            entry_point: "ingest_population_grid"
+          libraries:
+            - whl: .
+
+        - task_key: "preprocess_population_grid"
+          job_cluster_key: "databricks_geo_cluster"
+          depends_on:
+            - task_key: "ingest_population_grid"
+          python_wheel_task:
+            package_name: "next_station"
+            entry_point: "preprocess_population_grid"
+          libraries:
+            - whl: .
+            - maven:
+                coordinates: "org.apache.sedona:sedona-spark-shaded-${var.spark_version}:${var.sedona_version}"
+            - maven:
+                coordinates: "org.datasyslab:geotools-wrapper:${var.geotools_version}"
