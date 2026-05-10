@@ -10,6 +10,14 @@ artifacts:
 variables:
   volume_path:
     description: "Target path for python wheel"
+  spark_version:
+    default: "4.0_2.13"
+  sedona_version:
+    default: "1.8.1"
+  geotools_version:
+    default: "1.8.0-33.1"
+  databricks_runtime_version:
+    default: "17.3.x-scala2.13"
 
 targets:
   prod:
@@ -22,9 +30,9 @@ resources:
       name: "ETL Geo Job"
       job_clusters:
         - job_cluster_key: "databricks_job_cluster"
-          new_cluster:
+          new_cluster
             cluster_name: "Job cluster"
-            spark_version: "17.3.x-scala2.13"
+            spark_version: ${var.databricks_runtime_version}
             node_type_id: "r5d.large"
             num_workers: 2
             aws_attributes:
@@ -38,8 +46,9 @@ resources:
               "spark.sql.sedona.raster.serialization.kryo": "true"
           data_security_mode: "SINGLE_USER"
         libraries:
-          - whl: "/Volumes/main/utility/packages/geo-etl-package/.internal/next_station-0.1.0-py3-none-any.whl"
+          - whl: ${artifacts.default.target}
           - maven:
-              coordinates: "org.apache.sedona:sedona-spark-shaded-4.0_2.13:1.8.1"
+              coordinates: "org.apache.sedona:sedona-spark-shaded-${var.spark_version}:${var.sedona_version}"
           - maven:
-              coordinates: "org.datasyslab:geotools-wrapper:1.8.0-33.1"
+              coordinates: "org.datasyslab:geotools-wrapper:${var.geotools_version}"
+
