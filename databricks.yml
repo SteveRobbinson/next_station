@@ -18,6 +18,8 @@ variables:
     default: "1.8.0-33.1"
   databricks_runtime_version:
     default: "17.3.x-scala2.13"
+  sql_warehouse_id:
+    description: "warehouse ID for dbt related tasks"
 
 targets:
   prod:
