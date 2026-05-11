@@ -67,6 +67,28 @@ resources:
           libraries:
             - whl: ${workspace.artifact_path}
 
+        - task_key: "railway_stations_silver_A"
+          job_cluster_key: "databricks_geo_cluster"
+          depends_on:
+            - task_key: "preprocess_railway_stations"
+          dbt_task:
+            project_directory: "./dbt_project"
+            warehouse_id: ${var.sql_warehouse_id}
+            commands:
+              - "dbt deps"
+              - "dbt run --select stg_railway_stations"
+
+        - task_key: "railway_stations_silver_B"
+          job_cluster_key: "databricks_geo_cluster"
+          depends_on:
+            - task_key: "railway_stations_silver_A"
+          dbt_task:
+            project_directory: "./dbt_project"
+            warehouse_id: ${var.sql_warehouse_id}
+            commands:
+              - "dbt run --select int_railway_stations"
+
+
         ### Population Grid Pipeline ####
         - task_key: "ingest_population_grid"
           job_cluster_key: "databricks_geo_cluster"
