@@ -1,11 +1,11 @@
 bundle:
-  name: geo-etl-package
+  name: geo-etl-pipeline
 
 artifacts:
-  default:
+  app_wheel:
     type: whl
     path: .
-    build: "python3 -m build --wheel"
+    build: "python -m build --wheel"
 
 variables:
   volume_path:
@@ -31,7 +31,6 @@ resources:
       job_clusters:
       - job_cluster_key: "databricks_geo_cluster"
         new_cluster:
-          cluster_name: "Job cluster"
           spark_version: ${var.databricks_runtime_version}
           node_type_id: "r5d.large"
           num_workers: 2
@@ -54,17 +53,17 @@ resources:
             package_name: "next_station"
             entry_point: "ingest_railway_station"
           libraries:
-            - whl: .
+            - whl: ${workspace.artifact_path}
 
         - task_key: "preprocess_railway_stations"
           job_cluster_key: "databricks_geo_cluster"
           depends_on:
-            - task_key: "preprocess_railway_stations"
+            - task_key: "ingest_railway_stations"
           python_wheel_task:
             package_name: "next_station"
             entry_point: "preprocess_railway_stations"
           libraries:
-            - whl: .
+            - whl: ${workspace.artifact_path}
 
         ### Population Grid Pipeline ####
         - task_key: "ingest_population_grid"
@@ -73,7 +72,7 @@ resources:
             package_name: "next_station"
             entry_point: "ingest_population_grid"
           libraries:
-            - whl: .
+            - whl: ${workspace.artifact_path}
 
         - task_key: "preprocess_population_grid"
           job_cluster_key: "databricks_geo_cluster"
@@ -83,7 +82,7 @@ resources:
             package_name: "next_station"
             entry_point: "preprocess_population_grid"
           libraries:
-            - whl: .
+            - whl: ${workspace.artifact_path}
             - maven:
                 coordinates: "org.apache.sedona:sedona-spark-shaded-${var.spark_version}:${var.sedona_version}"
             - maven:
