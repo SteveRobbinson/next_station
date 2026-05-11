@@ -111,3 +111,24 @@ resources:
                 coordinates: "org.apache.sedona:sedona-spark-shaded-${var.spark_version}:${var.sedona_version}"
             - maven:
                 coordinates: "org.datasyslab:geotools-wrapper:${var.geotools_version}"
+                  
+        - task_key: "population_grid_silver_A"
+          job_cluster_key: "databricks_geo_cluster"
+          depends_on:
+            - task_key: "preprocess_population_grid"
+          dbt_task:
+            project_directory: "./dbt_project"
+            warehouse_id: ${var.sql_warehouse_id}
+            commands:
+              - "dbt deps"
+              - "dbt run --select stg_population_grid"
+
+        - task_key: "population_grid_silver_B"
+          job_cluster_key: "databricks_geo_cluster"
+          depends_on:
+            - task_key: "population_grid_silver_A"
+          dbt_task:
+            project_directory: "./dbt_project"
+            warehouse_id: ${var.sql_warehouse_id}
+            commands:
+              - "dbt run --select ing_population_grid"
