@@ -15,5 +15,13 @@ dbt_packages/
 logs/
 target/
 
-#pyproject
+# pyproject
 *.egg-info
+
+# Python build artifacts
+build/
+dist/
+
+# Databricks artifacts
+.databricks/
+.bundle/
